@@ -182,7 +182,7 @@ BFB_FILE="${BFB_VERSION:+bf-fwbundle-${BFB_VERSION}.bfb}"
 
 # Source Aerial container setup for version info
 CUPHY_CP_SETUP="${SCRIPT_DIR}/../../cuPHY-CP/container/setup.sh"
-AERIAL_VERSION_TAG="${AERIAL_VERSION_TAG:-26-1}"
+AERIAL_VERSION_TAG="${AERIAL_VERSION_TAG:-26-1-cubb}"
 if [[ -f "$CUPHY_CP_SETUP" ]]; then
     source "$CUPHY_CP_SETUP"
 else
