@@ -194,11 +194,11 @@ int main(int argc, char** argv) {
 
         // Use appropriate template parameters
         if (nRxAnt == 8 && nLayers == 1) {
-            cfo_ta_est::cfoTaEstLowMimoKernel<float2, float2, float, 8, 1, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
+            cfo_ta_est::cfoTaEstLowMimoKernel<float, float, float, 8, 1, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
         } else if (nRxAnt == 8 && nLayers == 2) {
-            cfo_ta_est::cfoTaEstLowMimoKernel<float2, float2, float, 8, 2, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
+            cfo_ta_est::cfoTaEstLowMimoKernel<float, float, float, 8, 2, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
         } else if (nRxAnt == 4 && nLayers == 4) {
-            cfo_ta_est::cfoTaEstLowMimoKernel<float2, float2, float, 4, 4, 2, 32, 2, 8><<<gridDim, blockDim>>>(dynDescr);
+            cfo_ta_est::cfoTaEstLowMimoKernel<float, float, float, 4, 4, 2, 32, 2, 8><<<gridDim, blockDim>>>(dynDescr);
         }
     };
 
