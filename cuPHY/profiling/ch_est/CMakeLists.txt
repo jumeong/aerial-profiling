@@ -77,6 +77,7 @@ set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 # ---------------------------------------------------------------
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} \
     --extended-lambda \
+    --expt-relaxed-constexpr \
     -Xcompiler -fPIC \
     -lineinfo \
     --generate-line-info \
