@@ -49,8 +49,14 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    // ----------------------------------------------------------
+    // Tensor size calculations
+    // ----------------------------------------------------------
     const uint32_t N_PRB = 273;
-    const uint32_t N_TONES = N_PRB * 12;
+    // Pad N_PRB to a multiple of N_PRB_PER_THRD_BLK (8) for safe allocation
+    constexpr uint32_t N_PRB_PER_THRD_BLK = 8;
+    const uint32_t N_PRB_ALLOC = ((N_PRB + N_PRB_PER_THRD_BLK - 1) / N_PRB_PER_THRD_BLK) * N_PRB_PER_THRD_BLK; // 280
+    const uint32_t N_TONES = N_PRB_ALLOC * 12;
     const uint32_t N_TIME_CH_EST = 2;
     const uint32_t N_UE_GRP = 1;
     const uint32_t MAX_ND_SUPPORTED = 14;
@@ -161,7 +167,7 @@ int main(int argc, char** argv) {
     // Setup launch geometry
     constexpr uint32_t THRD_GRP_TILE_SIZE = 32;
     uint32_t N_THRD_GRP_TILES_PER_LAYER = (((nRxAnt * 12) + THRD_GRP_TILE_SIZE - 1) / THRD_GRP_TILE_SIZE);
-    constexpr uint32_t N_PRB_PER_THRD_BLK = 8;
+    // N_PRB_PER_THRD_BLK already declared at the top
 
     uint32_t N_THRDS_PER_LAYER = N_THRD_GRP_TILES_PER_LAYER * THRD_GRP_TILE_SIZE;
     uint32_t nThrdBlksPerUeGrp = (N_PRB + N_PRB_PER_THRD_BLK - 1) / N_PRB_PER_THRD_BLK;
