@@ -52,6 +52,7 @@ add_executable(cfo_ta_est_profiler
     cfo_ta_est_profiler.cu
     profiling_stubs.cpp
 )
+set_target_properties(cfo_ta_est_profiler PROPERTIES CUDA_ARCHITECTURES "89")
 
 # ---------------------------------------------------------------
 # Include paths
