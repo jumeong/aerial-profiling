@@ -22,6 +22,10 @@
  *   Scale factor: GB10 / RTX4070S ≈ 6144/7168 ≈ 0.86x (GB10 slightly slower, compute-bound estimate)
  */
 
+// cuda_fp16.h must come before cuphy.hpp (via ch_est.cu) because cuphy.hpp
+// uses __half22float2() which is declared in cuda_fp16.h.
+#include "cuda_fp16.h"
+
 // ============================================================
 // Translation-unit trick: include ch_est.cu directly so that
 // the static __global__ kernel symbols are visible in this TU.

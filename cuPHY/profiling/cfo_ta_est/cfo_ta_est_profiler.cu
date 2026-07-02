@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 
+// cuda_fp16.h must come before cuphy.hpp to provide __half22float2
+#include <cuda_fp16.h>
+
 // Include necessary cuPHY headers
 #include "cuphy.hpp"
 #include "cuphy_api.h"
