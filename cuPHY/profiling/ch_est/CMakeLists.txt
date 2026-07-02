@@ -188,6 +188,8 @@ target_compile_definitions(ch_est_profiler PRIVATE
     NVLOG_DISABLE_ALL
     # Suppress MemtraceDisableScope dependencies from linking against libmimalloc
     # (memtrace.h is header-only and uses weak symbols, so this is fine)
+    # Required by gsl-lite.hpp when not explicitly linking gsl-lite-v1 CMake target
+    gsl_CONFIG_DEFAULTS_VERSION=1
 )
 
 # ---------------------------------------------------------------
