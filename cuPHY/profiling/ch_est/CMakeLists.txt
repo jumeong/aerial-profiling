@@ -91,6 +91,40 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} \
 find_package(CUDAToolkit REQUIRED)
 
 # ---------------------------------------------------------------
+# LUT Generation (genLUT)
+# ---------------------------------------------------------------
+set(LUTS_DIR "${CMAKE_CURRENT_BINARY_DIR}/LUTS")
+file(MAKE_DIRECTORY ${LUTS_DIR})
+
+add_executable(genLUT 
+    "${CUPHY_SRC_DIR}/crc/gen_crc_LUTs.cpp"
+)
+target_include_directories(genLUT PRIVATE
+    "${CUPHY_SRC_DIR}"
+    "${CUPHY_SRC_DIR}/crc"
+    "${CUPHY_SRC_DIR}/descrambling"
+)
+
+add_custom_command(OUTPUT
+        ${LUTS_DIR}/G_CRC_24_A_P_LUT.h
+        ${LUTS_DIR}/G_CRC_24_B_P_LUT.h
+        ${LUTS_DIR}/G_CRC_16_P_LUT.h
+        ${LUTS_DIR}/GOLD_1_SEQ_LUT.h
+        ${LUTS_DIR}/GOLD_2_32_P_LUT.h
+    COMMAND genLUT ${LUTS_DIR}
+    DEPENDS genLUT "${CUPHY_SRC_DIR}/crc/gen_crc_LUTs.cpp"
+    COMMENT "Generating LUTs for CRC and Descrambling"
+)
+
+add_custom_target(CRCLUTGEN DEPENDS
+    ${LUTS_DIR}/G_CRC_24_A_P_LUT.h
+    ${LUTS_DIR}/G_CRC_24_B_P_LUT.h
+    ${LUTS_DIR}/G_CRC_16_P_LUT.h
+    ${LUTS_DIR}/GOLD_1_SEQ_LUT.h
+    ${LUTS_DIR}/GOLD_2_32_P_LUT.h
+)
+
+# ---------------------------------------------------------------
 # Executable
 # Note: ch_est.cu is included via #include inside ch_est_profiler.cu
 #       so it must NOT appear here as a separate source file.
@@ -98,6 +132,9 @@ find_package(CUDAToolkit REQUIRED)
 add_executable(ch_est_profiler
     ch_est_profiler.cu
 )
+
+# Ensure LUTs are generated before compiling the profiler
+add_dependencies(ch_est_profiler CRCLUTGEN)
 
 # ---------------------------------------------------------------
 # Include paths
@@ -119,6 +156,8 @@ target_include_directories(ch_est_profiler PRIVATE
     "${CUPHY_UTIL_DIR}/aerial_utils"
     # pusch_start_kernels.hpp
     "${CUPHY_SRC_DIR}"
+    # Generated LUTs directory
+    "${LUTS_DIR}"
 )
 
 # ---------------------------------------------------------------
