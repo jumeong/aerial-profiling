@@ -17,6 +17,8 @@
 #include <limits>
 #include "exit_handler.hpp"
 #include "ch_est_graph_mgr.hpp"
+#include "ch_est_stream.hpp"
+#include "pusch_start_kernels.hpp"
 #include "cuphy.hpp"
 #include "cuphy_utils.hpp"
 
@@ -109,3 +111,22 @@ void ch_est::ChestNodes::setSecondaryNodeStatus(
 
 void ch_est::ChestNodes::disableNodes0Slot(CUgraphExec)
 {}
+
+// -----------------------------------------------------------------------
+// ChestStream stubs (vtable is in ch_est_stream.cpp)
+// -----------------------------------------------------------------------
+
+void ch_est::ChestStream::launchKernels(cudaStream_t) {}
+void ch_est::ChestStream::launchKernels0Slot(cudaStream_t) {}
+void ch_est::ChestStream::launchSecondaryKernels(cudaStream_t) {}
+void ch_est::ChestStream::launchSecondaryKernels0Slot(cudaStream_t) {}
+
+// -----------------------------------------------------------------------
+// pusch::StartKernels stubs
+// -----------------------------------------------------------------------
+
+void pusch::StartKernels::setWaitKernelParams(
+    cuphyPuschRxWaitLaunchCfg_t*, uint8_t, void*, void*) {}
+
+void pusch::StartKernels::setDeviceGraphLaunchKernelParams(
+    cuphyPuschRxDglLaunchCfg_t*, uint8_t, uint8_t, void*, void*) {}

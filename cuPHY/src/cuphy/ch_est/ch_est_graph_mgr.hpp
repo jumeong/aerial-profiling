@@ -252,7 +252,7 @@ public:
                                   m_chestNodes.chEstFirstLaunchCfgs(),
                                   chEstAlgo) {
         if (!nMaxChEstHetCfgs) {
-            throw std::invalid_argument(fmt::format("{} nMaxChEstHetCfgs cannot be zero", __func__));
+            throw std::invalid_argument(std::string(__func__) + " nMaxChEstHetCfgs cannot be zero");
         }
     }
 
