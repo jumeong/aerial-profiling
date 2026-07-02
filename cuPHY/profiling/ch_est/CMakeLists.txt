@@ -166,6 +166,8 @@ target_include_directories(ch_est_profiler PRIVATE
     "${LUTS_DIR}"
     # Downloaded gsl-lite header directory
     "${gsl-lite_SOURCE_DIR}/include"
+    # cuphy.hpp is located in examples/common
+    "${CUPHY_ROOT}/examples/common"
 )
 
 # ---------------------------------------------------------------
