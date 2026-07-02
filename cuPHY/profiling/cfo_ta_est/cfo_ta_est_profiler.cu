@@ -17,8 +17,8 @@
 // The kernel is template-based, so we include the cu file
 #include "cfo_ta_est.cu"
 
-#ifndef CUDA_CHECK
-#define CUDA_CHECK(call) \
+#ifndef CHECK_CUDA_ERR
+#define CHECK_CUDA_ERR(call) \
     do { \
         cudaError_t err = call; \
         if (err != cudaSuccess) { \
@@ -161,7 +161,7 @@ int main(int argc, char** argv) {
     CHECK_CUDA_ERR(cudaMalloc(&d_ueGrpPrms, sizeof(cuphyPuschRxUeGrpPrms_t)));
     CHECK_CUDA_ERR(cudaMemcpy(d_ueGrpPrms, &h_ueGrpPrms, sizeof(cuphyPuschRxUeGrpPrms_t), cudaMemcpyHostToDevice));
 
-    puschRxCfoTaEstDynDescr_t dynDescr;
+    cfo_ta_est::puschRxCfoTaEstDynDescr_t dynDescr;
     dynDescr.pDrvdUeGrpPrms = d_ueGrpPrms;
     dynDescr.nUeGrps = N_UE_GRP;
     dynDescr.pFoCompensationBuffers = nullptr;
