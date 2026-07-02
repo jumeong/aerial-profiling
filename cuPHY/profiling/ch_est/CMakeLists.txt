@@ -86,9 +86,10 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} \
 )
 
 # ---------------------------------------------------------------
-# External dependencies: cuRAND (bundled with CUDA Toolkit)
+# External dependencies: cuRAND, gsl-lite
 # ---------------------------------------------------------------
 find_package(CUDAToolkit REQUIRED)
+find_package(gsl-lite REQUIRED)
 
 # ---------------------------------------------------------------
 # LUT Generation (genLUT)
@@ -150,8 +151,6 @@ target_include_directories(ch_est_profiler PRIVATE
     "${CUPHY_SRC_DIR}"
     # nvlog.hpp, nvlog_fmt.hpp, memtrace.h
     "${NVLOG_DIR}"
-    # gsl-lite (used in ch_est.hpp IModule.hpp)
-    "${CUPHY_UTIL_DIR}/gsl-lite/include"
     # aerial_utils (for memfoot_global.h)
     "${CUPHY_UTIL_DIR}/aerial_utils"
     # pusch_start_kernels.hpp
@@ -167,6 +166,7 @@ target_link_libraries(ch_est_profiler PRIVATE
     CUDA::cudart
     CUDA::curand
     CUDA::cuda_driver
+    gsl-lite::gsl-lite
 )
 
 # ---------------------------------------------------------------
