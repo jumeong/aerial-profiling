@@ -592,7 +592,7 @@ int main(int argc, char* argv[]) {
     CUDA_CHECK(cudaFree(d_strides_dbg));
     CUDA_CHECK(cudaFree(d_statDescr));
     CUDA_CHECK(cudaFree(d_ueGrpPrms));
-    for (int t = 0; t < 2; t++) CUDA_CHECK(cudaFree(d_dynDescr[t]));
+    for (int t = 0; t < 1; t++) CUDA_CHECK(cudaFree(d_dynDescr[t]));
     CURAND_CHECK(curandDestroyGenerator(gen));
     CUDA_CHECK(cudaStreamDestroy(stream));
 
