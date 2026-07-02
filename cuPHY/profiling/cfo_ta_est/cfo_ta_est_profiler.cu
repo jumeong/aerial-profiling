@@ -220,14 +220,30 @@ int main(int argc, char** argv) {
     CHECK_CUDA_ERR(cudaEventElapsedTime(&ms, start, stop));
     float avg_us = (ms * 1000.0f) / PROFILING_ITERS;
 
-    std::cout << "----------------------------------------" << std::endl;
-    std::cout << "Avg Latency: " << std::fixed << std::setprecision(2) << avg_us << " us" << std::endl;
-    std::cout << "----------------------------------------" << std::endl;
+    static constexpr double RTX4070S_CUDA_CORES = 7168.0;
+    static constexpr double GB10_CUDA_CORES     = 6144.0;  // NVIDIA Spark GB10 (Blackwell)
 
-    // Estimate GB10 time (6144 CUDA cores vs 7168 on RTX 4070 Super)
-    // ratio = 6144 / 7168 ~ 0.857
-    float gb10_us = avg_us * (7168.0f / 6144.0f);
-    std::cout << "Estimated GB10 Latency: " << std::fixed << std::setprecision(2) << gb10_us << " us" << std::endl;
+    // ----------------------------------------------------------
+    // Print summary & GB10 estimate
+    // ----------------------------------------------------------
+    printf("\n=======================================================\n");
+    printf(" RESULTS SUMMARY  [%s]\n", config.c_str());
+    printf("=======================================================\n");
+    printf(" %-30s %10s %10s\n", "Config", "RTX4070S(us)", "GB10 est.(us)");
+    printf(" %-30s %10s %10s\n", "------", "------------", "-------------");
+
+    // Simple compute-bound scaling: GB10 is faster by CUDA core ratio
+    double scale = RTX4070S_CUDA_CORES / GB10_CUDA_CORES;  // < 1.0 (GB10 faster)
+
+    char label[64];
+    snprintf(label, sizeof(label), "%s CFO/TA Est", config.c_str());
+    double gb10_est = (double)avg_us * scale;
+    printf(" %-30s %10.3f %10.3f\n", label, avg_us, gb10_est);
+
+    printf("\n[NOTE] GB10 estimate assumes compute-bound scaling:\n");
+    printf("       RTX 4070 Super  ~%.0f CUDA cores\n", RTX4070S_CUDA_CORES);
+    printf("       NVIDIA Spark GB10 ~%.0f CUDA cores (estimated)\n", GB10_CUDA_CORES);
+    printf("       Scale factor: %.3fx (GB10 / RTX4070S)\n\n", GB10_CUDA_CORES / RTX4070S_CUDA_CORES);
 
     return 0;
 }
