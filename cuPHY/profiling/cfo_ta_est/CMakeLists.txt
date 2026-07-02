@@ -6,10 +6,10 @@ set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
-set(CUPHY_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+set(CUPHY_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../..")
 set(CUPHY_SRC_DIR "${CUPHY_ROOT}/src/cuphy")
 set(CUPHY_UTIL_DIR "${CUPHY_ROOT}/util")
-set(NVLOG_DIR "${CUPHY_ROOT}/src/nvlog")
+set(NVLOG_DIR "${CUPHY_ROOT}/nvlog/include")
 
 # ---------------------------------------------------------------
 # CUDA flags
