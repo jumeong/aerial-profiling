@@ -115,6 +115,8 @@ target_include_directories(ch_est_profiler PRIVATE
     "${NVLOG_DIR}"
     # gsl-lite (used in ch_est.hpp IModule.hpp)
     "${CUPHY_UTIL_DIR}/gsl-lite/include"
+    # aerial_utils (for memfoot_global.h)
+    "${CUPHY_UTIL_DIR}/aerial_utils"
     # pusch_start_kernels.hpp
     "${CUPHY_SRC_DIR}"
 )
