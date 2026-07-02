@@ -136,7 +136,7 @@ public:
                                                                                        std::numeric_limits<uint8_t>::max())),
             m_chEstSecondNodesEnabled(m_chEstNodesEnabled) {
         if (!nMaxChEstHetCfgs) {
-            throw std::invalid_argument(fmt::format("{} nMaxChEstHetCfgs cannot be zero", __func__));
+            throw std::invalid_argument(std::string(__func__) + " nMaxChEstHetCfgs cannot be zero");
         }
     }
 

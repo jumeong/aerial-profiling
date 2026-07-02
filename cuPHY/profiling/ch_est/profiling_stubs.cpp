@@ -84,3 +84,28 @@ void ch_est::ChestSubSlotNodes::setNodeStatus(
 void ch_est::ChestSubSlotNodes::setSecondaryNodeStatus(
     ChestCudaUtils::DisableAllNodes, CUgraphExec)
 {}
+
+// -----------------------------------------------------------------------
+// ChestNodes stubs (vtable is in ch_est_graph_mgr.cpp)
+// -----------------------------------------------------------------------
+
+void ch_est::ChestNodes::addKernelNodeToGraph(
+    CUgraph, std::vector<CUgraphNode>&, std::vector<CUgraphNode>&,
+    CUDA_KERNEL_NODE_PARAMS&)
+{}
+
+void ch_est::ChestNodes::addSecondaryKernelNodeToGraph(
+    CUgraph, std::vector<CUgraphNode>&, std::vector<CUgraphNode>&,
+    CUDA_KERNEL_NODE_PARAMS&)
+{}
+
+void ch_est::ChestNodes::setNodeStatus(
+    ChestCudaUtils::DisableAllNodes, CUgraphExec)
+{}
+
+void ch_est::ChestNodes::setSecondaryNodeStatus(
+    ChestCudaUtils::DisableAllNodes, CUgraphExec)
+{}
+
+void ch_est::ChestNodes::disableNodes0Slot(CUgraphExec)
+{}
