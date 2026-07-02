@@ -238,9 +238,13 @@ int main(int argc, char* argv[]) {
     // Tensor size calculations
     // ----------------------------------------------------------
     // tDataRx: (NF, ND, nRxAnt) complex FP16
-    //   NF = N_PRB * N_TONES_PER_PRB = 273 * 12 = 3276
+    //   NF = N_PRB_CLUSTERS * N_DMRS_OUT * N_TONES_PER_PRB = 69 * 4 * 12 = 3312
     //   ND = N_OFDM_SYMS = 14
-    const int NF = N_PRB * N_TONES_PER_PRB_P; // 3276
+    //   NOTE: We allocate up to the rounded-up PRB cluster size because the kernel 
+    //         writes up to N_PRB_CLUSTERS * N_DMRS_OUT PRBs to tHEst, causing out-of-bounds
+    //         if we only allocate N_PRB (273).
+    const int N_PRB_CLUSTERS = (N_PRB + N_DMRS_OUT - 1) / N_DMRS_OUT;
+    const int NF = N_PRB_CLUSTERS * N_DMRS_OUT * N_TONES_PER_PRB_P; // 3312
     const int ND = N_OFDM_SYMS;               // 14
     const size_t n_dataRx = (size_t)NF * ND * nRxAnt;
 
@@ -402,11 +406,10 @@ int main(int argc, char* argv[]) {
     h_ueGrpPrms.dmrsScrmId    = 0;
     h_ueGrpPrms.nDmrsCdmGrpsNoData = 1;
 
-    // activeDMRSGridBmsk: both grids active (bit0=grid0, bit1=grid1)
-    h_ueGrpPrms.activeDMRSGridBmsk = 0x3;
+    // activeDMRSGridBmsk: grid0 active for 1L, both active for 2L/4L
+    h_ueGrpPrms.activeDMRSGridBmsk = (nLayers == 1) ? 0x1 : 0x3;
 
     // OCC masks: single-symbol DMRS, 1 TOCC, active FOCC depending on nLayers
-    // For simplicity: activeTOCCBmsk=1, activeFOCCBmsk depends on layers
     //   1L: 1 FOCC -> 0x1
     //   2L: 1 FOCC per TOCC (port0 grid0, port1 grid1) -> 0x1 for both grids
     //   4L: 2 FOCCs (port0,1 on grid0 focc0,1; port2,3 on grid1 focc0,1) -> 0x3
@@ -416,9 +419,17 @@ int main(int argc, char* argv[]) {
     }
 
     // OCC indices: for DMRS Type1, single-TOCC
-    // Port mapping: layer i -> portIdx=i (simple sequential)
-    for (int l = 0; l < nLayers && l < MAX_N_LAYERS_PUSCH; l++) {
-        h_ueGrpPrms.OCCIdx[l] = 0;
+    // bit[1:0] = FOCC/TOCC index, bit[2] = grid index
+    if (nLayers == 1) {
+        h_ueGrpPrms.OCCIdx[0] = 0; // Grid 0, OCC 0
+    } else if (nLayers == 2) {
+        h_ueGrpPrms.OCCIdx[0] = 0; // Grid 0, OCC 0
+        h_ueGrpPrms.OCCIdx[1] = 4; // Grid 1, OCC 0
+    } else if (nLayers == 4) {
+        h_ueGrpPrms.OCCIdx[0] = 0; // Grid 0, OCC 0
+        h_ueGrpPrms.OCCIdx[1] = 1; // Grid 0, OCC 1
+        h_ueGrpPrms.OCCIdx[2] = 4; // Grid 1, OCC 0
+        h_ueGrpPrms.OCCIdx[3] = 5; // Grid 1, OCC 1
     }
 
     // tInfoDataRx: (NF, ND, nRxAnt)  — cuphyTensorInfo3_t
@@ -482,9 +493,9 @@ int main(int argc, char* argv[]) {
     //            = (ceil(273/4), nRxAnt, 1)
     //            = (69, nRxAnt, 1)
     // ----------------------------------------------------------
-    const uint32_t N_PRB_CLUSTERS = (N_PRB + N_DMRS_OUT - 1) / N_DMRS_OUT; // 69
+    const uint32_t N_PRB_CLUSTERS_U32 = (N_PRB + N_DMRS_OUT - 1) / N_DMRS_OUT; // 69
     dim3 blockDim(N_DMRS_IN * N_TONES_PER_PRB_P);                           // 96
-    dim3 gridDim(N_PRB_CLUSTERS, (uint32_t)nRxAnt, N_UE_GRPS);             // (69, nRxAnt, 1)
+    dim3 gridDim(N_PRB_CLUSTERS_U32, (uint32_t)nRxAnt, N_UE_GRPS);             // (69, nRxAnt, 1)
 
     printf("[LAUNCH] blockDim=(%d,1,1)  gridDim=(%d,%d,%d)\n",
            blockDim.x, gridDim.x, gridDim.y, gridDim.z);
