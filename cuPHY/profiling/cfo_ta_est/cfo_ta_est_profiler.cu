@@ -17,6 +17,7 @@
 // The kernel is template-based, so we include the cu file
 #include "cfo_ta_est.cu"
 
+#ifndef CUDA_CHECK
 #define CUDA_CHECK(call) \
     do { \
         cudaError_t err = call; \
@@ -26,6 +27,7 @@
             exit(EXIT_FAILURE); \
         } \
     } while (0)
+#endif
 
 int main(int argc, char** argv) {
     std::string config = "4T4L";
@@ -59,7 +61,7 @@ int main(int argc, char** argv) {
     const uint32_t N_TONES = N_PRB_ALLOC * 12;
     const uint32_t N_TIME_CH_EST = 2;
     const uint32_t N_UE_GRP = 1;
-    const uint32_t MAX_ND_SUPPORTED = 14;
+    // MAX_ND_SUPPORTED is already defined as 14 in cuphy.h
     const uint32_t MAX_N_UE = 12; // arbitrary max
     const uint32_t N_MAX_LAYERS = 8;
 
@@ -106,17 +108,17 @@ int main(int argc, char** argv) {
     h_ueGrpPrms.startPrb = 0;
     h_ueGrpPrms.enableCfoCorrection = true;
     h_ueGrpPrms.enableToEstimation = true;
-    h_ueGrpPrms.deltaFHz = 30000.0f; // 30kHz SCS
-    h_ueGrpPrms.cpLength = 144; // arbitrary
-
+    // deltaFHz is not in the struct, likely computed via `mu` (SCS parameter)
+    h_ueGrpPrms.mu = 1; // 30kHz SCS
+    // cpLength is not in the struct? wait, let me remove cpLength too if it doesn't exist.
     // DMRS info
     h_ueGrpPrms.dmrsSymLoc[0] = 2;
     h_ueGrpPrms.dmrsSymLoc[1] = 11;
     h_ueGrpPrms.dmrsCnt = 2;
-    h_ueGrpPrms.pUeIdxs[0] = 0; // ueIdx for layer 0
-    if(nLayers > 1) h_ueGrpPrms.pUeIdxs[1] = 0;
-    if(nLayers > 2) h_ueGrpPrms.pUeIdxs[2] = 0;
-    if(nLayers > 3) h_ueGrpPrms.pUeIdxs[3] = 0;
+    h_ueGrpPrms.ueIdxs[0] = 0; // ueIdx for layer 0
+    if(nLayers > 1) h_ueGrpPrms.ueIdxs[1] = 0;
+    if(nLayers > 2) h_ueGrpPrms.ueIdxs[2] = 0;
+    if(nLayers > 3) h_ueGrpPrms.ueIdxs[3] = 0;
 
     // tInfoHEst strides (fastest to slowest: N_BS_ANTS, N_LAYERS, NF, NH)
     h_ueGrpPrms.tInfoHEst.pAddr = d_hEst;
