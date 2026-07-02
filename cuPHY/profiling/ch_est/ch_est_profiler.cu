@@ -465,10 +465,10 @@ int main(int argc, char* argv[]) {
     // chEstTimeInst=0 -> dmrsSymLoc[0] = sym 2
     // chEstTimeInst=1 -> dmrsSymLoc[0] = sym 11
     // ----------------------------------------------------------
-    const uint8_t dmrsSymbols[2] = {2, 11};
+    const uint8_t dmrsSymbols[1] = {2};
 
-    ch_est::puschRxChEstDynDescr_t* d_dynDescr[2];
-    for (int t = 0; t < 2; t++) {
+    ch_est::puschRxChEstDynDescr_t* d_dynDescr[1];
+    for (int t = 0; t < 1; t++) {
         ch_est::puschRxChEstDynDescr_t h_dynDescr;
         memset(&h_dynDescr, 0, sizeof(h_dynDescr));
 
@@ -543,8 +543,8 @@ int main(int argc, char* argv[]) {
     // ----------------------------------------------------------
     // Run profiling for DMRS sym 2 and sym 11
     // ----------------------------------------------------------
-    float latency_us[2];
-    for (int t = 0; t < 2; t++) {
+    float latency_us[1];
+    for (int t = 0; t < 1; t++) {
         printf("[PROFILE] DMRS symbol index = %d\n", dmrsSymbols[t]);
         latency_us[t] = profile_one(dmrsSymbols[t], d_dynDescr[t]);
         printf("  Avg latency (RTX 4070 Super) : %.3f us\n", latency_us[t]);
@@ -562,7 +562,7 @@ int main(int argc, char* argv[]) {
     // Simple compute-bound scaling: GB10 is faster by CUDA core ratio
     double scale = RTX4070S_CUDA_CORES / GB10_CUDA_CORES;  // < 1.0 (GB10 faster)
 
-    for (int t = 0; t < 2; t++) {
+    for (int t = 0; t < 1; t++) {
         char label[64];
         snprintf(label, sizeof(label), "%s DMRS sym=%d", argv[1], dmrsSymbols[t]);
         double gb10_est = (double)latency_us[t] * scale;
