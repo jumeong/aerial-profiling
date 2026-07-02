@@ -12,6 +12,13 @@ set(CUPHY_UTIL_DIR "${CUPHY_ROOT}/util")
 set(NVLOG_DIR "${CUPHY_ROOT}/nvlog/include")
 
 # ---------------------------------------------------------------
+# CUDA architecture: default = Ada Lovelace (RTX 4070 Super = sm_89)
+# ---------------------------------------------------------------
+if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+    set(CMAKE_CUDA_ARCHITECTURES 89)
+endif()
+
+# ---------------------------------------------------------------
 # CUDA flags
 # ---------------------------------------------------------------
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} \
