@@ -137,9 +137,12 @@ add_custom_target(CRCLUTGEN DEPENDS
 # Executable
 # Note: ch_est.cu is included via #include inside ch_est_profiler.cu
 #       so it must NOT appear here as a separate source file.
+# profiling_stubs.cpp provides dummy definitions for symbols referenced
+#       by ch_est.cu but defined in other cuPHY TUs (nvlog.cpp, ch_est_graph_mgr.cpp)
 # ---------------------------------------------------------------
 add_executable(ch_est_profiler
     ch_est_profiler.cu
+    profiling_stubs.cpp
 )
 
 # Ensure LUTs are generated before compiling the profiler
@@ -157,12 +160,14 @@ target_include_directories(ch_est_profiler PRIVATE
     "${CUPHY_SRC_DIR}/descrambling"
     # type_convert.hpp
     "${CUPHY_SRC_DIR}"
-    # nvlog.hpp, nvlog_fmt.hpp, memtrace.h
+    # nvlog.hpp, nvlog_fmt.hpp, memtrace.h, exit_handler.hpp
     "${NVLOG_DIR}"
     # aerial_utils (for memfoot_global.h)
     "${CUPHY_UTIL_DIR}/aerial_utils"
     # pusch_start_kernels.hpp
     "${CUPHY_SRC_DIR}"
+    # ch_est subdir headers (ch_est_graph_mgr.hpp, IGraph_mgr.hpp, etc.)
+    "${CUPHY_SRC_DIR}/ch_est"
     # Generated LUTs directory
     "${LUTS_DIR}"
     # Downloaded gsl-lite header directory
