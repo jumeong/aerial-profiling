@@ -164,6 +164,8 @@ target_include_directories(ch_est_profiler PRIVATE
     "${CUPHY_SRC_DIR}"
     # Generated LUTs directory
     "${LUTS_DIR}"
+    # Downloaded gsl-lite header directory
+    "${gsl-lite_SOURCE_DIR}/include"
 )
 
 # ---------------------------------------------------------------
@@ -173,7 +175,6 @@ target_link_libraries(ch_est_profiler PRIVATE
     CUDA::cudart
     CUDA::curand
     CUDA::cuda_driver
-    gsl-lite::gsl-lite
 )
 
 # ---------------------------------------------------------------
