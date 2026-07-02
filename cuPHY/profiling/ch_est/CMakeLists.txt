@@ -89,7 +89,14 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} \
 # External dependencies: cuRAND, gsl-lite
 # ---------------------------------------------------------------
 find_package(CUDAToolkit REQUIRED)
-find_package(gsl-lite REQUIRED)
+
+include(FetchContent)
+FetchContent_Declare(
+  gsl-lite
+  GIT_REPOSITORY https://github.com/gsl-lite/gsl-lite.git
+  GIT_TAG        v0.41.0
+)
+FetchContent_MakeAvailable(gsl-lite)
 
 # ---------------------------------------------------------------
 # LUT Generation (genLUT)
