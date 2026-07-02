@@ -43,6 +43,7 @@ FetchContent_MakeAvailable(gsl-lite)
 # ---------------------------------------------------------------
 add_executable(cfo_ta_est_profiler
     cfo_ta_est_profiler.cu
+    profiling_stubs.cpp
 )
 
 # ---------------------------------------------------------------
