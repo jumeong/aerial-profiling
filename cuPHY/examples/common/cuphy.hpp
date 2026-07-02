@@ -3371,7 +3371,10 @@ inline double computeSnrComponentsHalf(double &avgSignalEnergy, double&avgErrorE
             for(int idx2 = 0; idx2 < dim[2]; ++idx2){
                 for(int idx3 = 0; idx3 < dim[3]; ++idx3){
                     float2 refScaler   = T_ref(idx0, idx1, idx2, idx3);
-                    float2 cuphyScaler = __half22float2(T_cuphy(idx0, idx1, idx2, idx3));
+                    __half2 c_val = T_cuphy(idx0, idx1, idx2, idx3);
+                    float2 cuphyScaler;
+                    cuphyScaler.x = static_cast<float>(c_val.x);
+                    cuphyScaler.y = static_cast<float>(c_val.y);
 
                     avgSignalEnergy += (pow(abs(refScaler.x),2) + pow(abs(refScaler.y),2)) / static_cast<double>(tensorSize);
                     avgErrorEnergy  += (pow(abs(refScaler.x - cuphyScaler.x),2) + pow(abs(refScaler.y - cuphyScaler.y),2)) / static_cast<double>(tensorSize);
