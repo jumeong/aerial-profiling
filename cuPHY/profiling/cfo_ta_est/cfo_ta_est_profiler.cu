@@ -71,32 +71,32 @@ int main(int argc, char** argv) {
     // Allocate GPU buffers
     // tInfoHEst: (N_BS_ANTS, N_LAYERS, NF, NH)
     size_t sz_hEst = nRxAnt * nLayers * N_TONES * N_TIME_CH_EST * sizeof(float2);
-    float2* d_hEst; CUDA_CHECK(cudaMalloc(&d_hEst, sz_hEst));
+    float2* d_hEst; CHECK_CUDA_ERR(cudaMalloc(&d_hEst, sz_hEst));
 
     // tInfoCfoEst: (MAX_ND_SUPPORTED, MAX_N_UE)
     size_t sz_cfoEst = MAX_ND_SUPPORTED * MAX_N_UE * sizeof(float2);
-    float2* d_cfoEst; CUDA_CHECK(cudaMalloc(&d_cfoEst, sz_cfoEst));
+    float2* d_cfoEst; CHECK_CUDA_ERR(cudaMalloc(&d_cfoEst, sz_cfoEst));
 
     // tInfoCfoHz: (MAX_N_UE)
     size_t sz_cfoHz = MAX_N_UE * sizeof(float);
-    float* d_cfoHz; CUDA_CHECK(cudaMalloc(&d_cfoHz, sz_cfoHz));
+    float* d_cfoHz; CHECK_CUDA_ERR(cudaMalloc(&d_cfoHz, sz_cfoHz));
 
     // tInfoTaEst: (MAX_N_UE)
     size_t sz_taEst = MAX_N_UE * sizeof(float);
-    float* d_taEst; CUDA_CHECK(cudaMalloc(&d_taEst, sz_taEst));
+    float* d_taEst; CHECK_CUDA_ERR(cudaMalloc(&d_taEst, sz_taEst));
 
     // tInfoCfoPhaseRot: (MAX_N_TIME_CH_EST, N_MAX_LAYERS, N_MAX_UE_GRPS)
     size_t sz_cfoPhaseRot = 4 * N_MAX_LAYERS * N_UE_GRP * sizeof(float2);
-    float2* d_cfoPhaseRot; CUDA_CHECK(cudaMalloc(&d_cfoPhaseRot, sz_cfoPhaseRot));
+    float2* d_cfoPhaseRot; CHECK_CUDA_ERR(cudaMalloc(&d_cfoPhaseRot, sz_cfoPhaseRot));
 
     // tInfoTaPhaseRot: (N_MAX_LAYERS, N_MAX_UE_GRPS)
     size_t sz_taPhaseRot = N_MAX_LAYERS * N_UE_GRP * sizeof(float2);
-    float2* d_taPhaseRot; CUDA_CHECK(cudaMalloc(&d_taPhaseRot, sz_taPhaseRot));
+    float2* d_taPhaseRot; CHECK_CUDA_ERR(cudaMalloc(&d_taPhaseRot, sz_taPhaseRot));
 
     // tInfoCfoTaEstInterCtaSyncCnt
     size_t sz_syncCnt = N_UE_GRP * sizeof(uint32_t);
-    uint32_t* d_syncCnt; CUDA_CHECK(cudaMalloc(&d_syncCnt, sz_syncCnt));
-    CUDA_CHECK(cudaMemset(d_syncCnt, 0, sz_syncCnt));
+    uint32_t* d_syncCnt; CHECK_CUDA_ERR(cudaMalloc(&d_syncCnt, sz_syncCnt));
+    CHECK_CUDA_ERR(cudaMemset(d_syncCnt, 0, sz_syncCnt));
 
     // Build cuphyPuschRxUeGrpPrms_t
     cuphyPuschRxUeGrpPrms_t h_ueGrpPrms;
@@ -135,11 +135,11 @@ int main(int argc, char** argv) {
     h_ueGrpPrms.tInfoCfoEst.strides[1] = MAX_ND_SUPPORTED;
 
     h_ueGrpPrms.tInfoCfoHz.pAddr = d_cfoHz;
-    h_ueGrpPrms.tInfoCfoHz.elemType = CUPHY_32F;
+    h_ueGrpPrms.tInfoCfoHz.elemType = CUPHY_R_32F;
     h_ueGrpPrms.tInfoCfoHz.strides[0] = 1;
 
     h_ueGrpPrms.tInfoTaEst.pAddr = d_taEst;
-    h_ueGrpPrms.tInfoTaEst.elemType = CUPHY_32F;
+    h_ueGrpPrms.tInfoTaEst.elemType = CUPHY_R_32F;
     h_ueGrpPrms.tInfoTaEst.strides[0] = 1;
 
     h_ueGrpPrms.tInfoCfoPhaseRot.pAddr = d_cfoPhaseRot;
@@ -154,12 +154,12 @@ int main(int argc, char** argv) {
     h_ueGrpPrms.tInfoTaPhaseRot.strides[1] = N_MAX_LAYERS;
 
     h_ueGrpPrms.tInfoCfoTaEstInterCtaSyncCnt.pAddr = d_syncCnt;
-    h_ueGrpPrms.tInfoCfoTaEstInterCtaSyncCnt.elemType = CUPHY_32U;
+    h_ueGrpPrms.tInfoCfoTaEstInterCtaSyncCnt.elemType = CUPHY_R_32U;
     h_ueGrpPrms.tInfoCfoTaEstInterCtaSyncCnt.strides[0] = 1;
 
     cuphyPuschRxUeGrpPrms_t* d_ueGrpPrms;
-    CUDA_CHECK(cudaMalloc(&d_ueGrpPrms, sizeof(cuphyPuschRxUeGrpPrms_t)));
-    CUDA_CHECK(cudaMemcpy(d_ueGrpPrms, &h_ueGrpPrms, sizeof(cuphyPuschRxUeGrpPrms_t), cudaMemcpyHostToDevice));
+    CHECK_CUDA_ERR(cudaMalloc(&d_ueGrpPrms, sizeof(cuphyPuschRxUeGrpPrms_t)));
+    CHECK_CUDA_ERR(cudaMemcpy(d_ueGrpPrms, &h_ueGrpPrms, sizeof(cuphyPuschRxUeGrpPrms_t), cudaMemcpyHostToDevice));
 
     puschRxCfoTaEstDynDescr_t dynDescr;
     dynDescr.pDrvdUeGrpPrms = d_ueGrpPrms;
@@ -185,20 +185,20 @@ int main(int argc, char** argv) {
     const int PROFILING_ITERS = 100;
     
     cudaEvent_t start, stop;
-    CUDA_CHECK(cudaEventCreate(&start));
-    CUDA_CHECK(cudaEventCreate(&stop));
+    CHECK_CUDA_ERR(cudaEventCreate(&start));
+    CHECK_CUDA_ERR(cudaEventCreate(&stop));
 
     auto launchKernel = [&]() {
         // Zero sync counter before each run
-        CUDA_CHECK(cudaMemset(d_syncCnt, 0, sz_syncCnt));
+        CHECK_CUDA_ERR(cudaMemset(d_syncCnt, 0, sz_syncCnt));
 
         // Use appropriate template parameters
         if (nRxAnt == 8 && nLayers == 1) {
-            cfoTaEstLowMimoKernel<float2, float2, float, 8, 1, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
+            cfo_ta_est::cfoTaEstLowMimoKernel<float2, float2, float, 8, 1, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
         } else if (nRxAnt == 8 && nLayers == 2) {
-            cfoTaEstLowMimoKernel<float2, float2, float, 8, 2, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
+            cfo_ta_est::cfoTaEstLowMimoKernel<float2, float2, float, 8, 2, 2, 32, 3, 8><<<gridDim, blockDim>>>(dynDescr);
         } else if (nRxAnt == 4 && nLayers == 4) {
-            cfoTaEstLowMimoKernel<float2, float2, float, 4, 4, 2, 32, 2, 8><<<gridDim, blockDim>>>(dynDescr);
+            cfo_ta_est::cfoTaEstLowMimoKernel<float2, float2, float, 4, 4, 2, 32, 2, 8><<<gridDim, blockDim>>>(dynDescr);
         }
     };
 
@@ -206,18 +206,18 @@ int main(int argc, char** argv) {
     for (int i = 0; i < WARMUP_ITERS; i++) {
         launchKernel();
     }
-    CUDA_CHECK(cudaDeviceSynchronize());
+    CHECK_CUDA_ERR(cudaDeviceSynchronize());
 
     // Profile
-    CUDA_CHECK(cudaEventRecord(start));
+    CHECK_CUDA_ERR(cudaEventRecord(start));
     for (int i = 0; i < PROFILING_ITERS; i++) {
         launchKernel();
     }
-    CUDA_CHECK(cudaEventRecord(stop));
-    CUDA_CHECK(cudaEventSynchronize(stop));
+    CHECK_CUDA_ERR(cudaEventRecord(stop));
+    CHECK_CUDA_ERR(cudaEventSynchronize(stop));
 
     float ms = 0.0f;
-    CUDA_CHECK(cudaEventElapsedTime(&ms, start, stop));
+    CHECK_CUDA_ERR(cudaEventElapsedTime(&ms, start, stop));
     float avg_us = (ms * 1000.0f) / PROFILING_ITERS;
 
     std::cout << "----------------------------------------" << std::endl;
